@@ -37,9 +37,9 @@
   function onScanSuccess(decodedText, decodedResult) {
     // Handle on success condition with the decoded text or result.
     console.log(`Scan result: ${decodedText}`, decodedResult);
-    document.getElementById('dec_code').value=decodedText;
+    document.getElementById('dec_code').value=${decodedText};
     const userAction = async () => {
-      const response = await fetch('https://api.nal.usda.gov/fdc/v1/food/' + decodedText + '?api_key=aEhCjuYhkfGxsOSgdrovQjMHWLRiBOuvoqs3thGr');
+      const response = await fetch('https://api.nal.usda.gov/fdc/v1/food/' + ${decodedText} + '?api_key=aEhCjuYhkfGxsOSgdrovQjMHWLRiBOuvoqs3thGr');
       const myJson = await response.json(); //extract JSON from the http response
       document.getElementById('returned').value=myJson;
       // do something with myJson
