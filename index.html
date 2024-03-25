@@ -34,12 +34,13 @@
     </button>
   </div>
 </div>
-<div id="returned">Version: 0.0.5</div>
+<div id="reader" width="600px"></div>
+<div id="returned">Version: 0.0.6</div>
 
     <script src="js/app.js"></script>
   <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 <script>
-  const html5QrcodeScanner = new Html5QrcodeScanner("qr-reader");
+  const html5QrcodeScanner = new Html5QrcodeScanner("reader");
   const qrCodeSuccessCallback = (decodedText, decodedResult) => {
     /* handle success */
     console.log(`Scan result: ${decodedText}`, decodedResult);
