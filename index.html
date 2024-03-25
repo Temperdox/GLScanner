@@ -33,6 +33,7 @@
   function onScanSuccess(decodedText, decodedResult) {
     var decode = decodedText;
     document.getElementById('return').innerHtml = decode;
+    console.log(`Scan result: ${decodedText}`, decodedResult);
     document.getElementById('qr-reader').style.background = 'green';
   }
   var html5QrcodeScanner = new Html5QrcodeScanner(
