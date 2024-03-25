@@ -25,7 +25,7 @@
 
 <div id="qr-reader" style="width: 600px"></div>
   <div>Version 0.0.10</div>
-  <div id='return' style="width: 400px; height: 50px;"></div>
+  <div id='return' style="width: 400px; height: 50px;">test</div>
 
     <script src="js/app.js"></script>
   <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
@@ -33,7 +33,7 @@
   function onScanSuccess(decodedText, decodedResult) {
     console.log(`Code scanned = ${decodedText}`, decodedResult);
     document.getElementById('qr-reader').style.background = 'green';
-    document.getElementById('return').value = String(decodedText);
+    document.getElementById('return').value = decodedText;
   }
   var html5QrcodeScanner = new Html5QrcodeScanner(
     "qr-reader", { fps: 10, qrbox: 250 });
