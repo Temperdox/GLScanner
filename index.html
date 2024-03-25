@@ -43,9 +43,10 @@
       const myJson = await response.json(); //extract JSON from the http response
       document.getElementById('returned').value=myJson;
       // do something with myJson
+      
+    html5QrcodeScanner.clear();
     }
     // ...
-    html5QrcodeScanner.clear();
   }
 
   function onScanError(errorMessage) {
