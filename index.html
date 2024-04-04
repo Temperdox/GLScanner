@@ -1,91 +1,93 @@
-<!doctype html>
-<html class="no-js" lang="">
-
+<!DOCTYPE html>
+<html lang="en">
+<link rel="stylesheet" href="css/style.css">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title></title>
-  <link rel="stylesheet" href="css/style.css">
-  <meta name="description" content="">
-
-  <meta property="og:title" content="">
-  <meta property="og:type" content="">
-  <meta property="og:url" content="">
-  <meta property="og:image" content="">
-
-  <link rel="icon" href="/favicon.ico" sizes="any">
-  <link rel="icon" href="/icon.svg" type="image/svg+xml">
-  <link rel="apple-touch-icon" href="icon.png">
-
-  <link rel="manifest" href="site.webmanifest">
-  <meta name="theme-color" content="#fafafa">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Barcode Scanner and Glycemic Index Calculator</title>
+  <style>
+    /* Add your CSS styles here */
+  </style>
 </head>
-
 <body>
-
-<div id="qr-reader" style="width:500px"></div>
-    <input type="text" name="q" value="" id="myfield" class="form-control input-sm ui-autocomplete-input" size="50" tabindex="1" autocomplete="off">
-<div id='returned'></div>
-    <script src="js/app.js"></script>
-  <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+<h1>Barcode Scanner and Glycemic Index Calculator</h1>
+<div id="qr-reader" style="width: 600px"></div>
+<button id="scanButton">Scan Barcode</button>
+<div id="result"></div>
+<script src="js/app.js"></script>
+<script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 <script>
-     function docReady(fn) {
-        if (document.readyState === "complete"
-            || document.readyState === "interactive") {
-            setTimeout(fn, 1);
-        } else {
-            document.addEventListener("DOMContentLoaded", fn);
-        }
+  // Check if the browser supports the BarcodeDetector API
+  if ('BarcodeDetector' in window) {
+    const barcodeDetector = new BarcodeDetector();
+    const codeReader = new BarcodeDetector.getSupportedFormats();
+    var html5QrcodeScanner = new Html5QrcodeScanner(
+      "qr-reader", { fps: 10, qrbox: 250 });
+    html5QrcodeScanner.render(onScanSuccess);
+
+    // Get access to the camera
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+      .then(stream => {
+        const videoElement = document.getElementById('preview');
+        videoElement.srcObject = stream;
+        videoElement.play();
+      })
+      .catch(error => {
+        console.error('Error accessing camera:', error);
+      });
+
+    // Scan the barcode when the button is clicked
+    function onScanSuccess(decodedText, decodedResult) {
+      fetchProductDetails(decodedText)
+      console.log(`Code scanned = ${decodedText}`, decodedResult);
+      document.getElementById('qr-reader').style.background = 'green';
     }
 
-    docReady(function () {
-        var resultContainer = document.getElementById('myfield');
-        var lastResult, countResults = 0;
-        function onScanSuccess(decodedText, decodedResult) {
-            if (decodedText !== lastResult) {
-                ++countResults;
-                lastResult = decodedText;
-                console.log(`Scan result ${decodedText}`, decodedResult);
-                document.getElementById("myfield").value = decodedText;
-              const userAction = async () => {
-                const response = await fetch('https://api.nal.usda.gov/fdc/v1/food/' + decodedText + '?api_key=aEhCjuYhkfGxsOSgdrovQjMHWLRiBOuvoqs3thGr');
-                const myJson = await response.json(); //extract JSON from the http response
-                document.getElementById('returned').innerHTML=myJson;
-                // do something with myJson
-              }
-            }
-        }
+    // Fetch product details from the USDA API and calculate glycemic index and load
+    function fetchProductDetails(barcode) {
+      const apiUrl = `https://api.nal.usda.gov/ndb/search/?format=json&q=${barcode}&sort=r&max=25&offset=0&api_key=API_KEY`;
 
-        var html5QrcodeScanner = new Html5QrcodeScanner(
-            "qr-reader", { fps: 10, qrbox: 250 });
-        html5QrcodeScanner.render(onScanSuccess);
-    });
+      fetch(apiUrl)
+        .then(response => response.json())
+        .then(data => {
+          if (data.list && data.list.item) {
+            const product = data.list.item[0];
+            const glycemicIndex = calculateGlycemicIndex(product);
+            const glycemicLoad = calculateGlycemicLoad(product, glycemicIndex);
+            displayResult(product, glycemicIndex, glycemicLoad);
+          } else {
+            console.log('No product found for the given barcode');
+          }
+        })
+        .catch(error => {
+          console.error('Error fetching product details:', error);
+        });
+    }
+
+    // Calculate the glycemic index based on the product details
+    function calculateGlycemicIndex(product) {
+      // Implement your logic to calculate the glycemic index based on the product details
+      return 50; // Replace with your actual calculation
+    }
+
+    // Calculate the glycemic load based on the product details and glycemic index
+    function calculateGlycemicLoad(product, glycemicIndex) {
+      // Implement your logic to calculate the glycemic load based on the product details and glycemic index
+      return 10; // Replace with your actual calculation
+    }
+
+    // Display the result on the webpage
+    function displayResult(product, glycemicIndex, glycemicLoad) {
+      const resultElement = document.getElementById('result');
+      resultElement.innerHTML = `
+          <h2>${product.name}</h2>
+          <p>Glycemic Index: ${glycemicIndex}</p>
+          <p>Glycemic Load: ${glycemicLoad}</p>
+        `;
+    }
+  } else {
+    console.log('Barcode detection is not supported in this browser');
+  }
 </script>
-<!--<script>
-  var html5QrcodeScanner = new Html5QrcodeScanner(
-    "reader", { fps: 10, qrbox: 250 });
-
-  html5QrcodeScanner.render(onScanSuccess);
-  function onScanSuccess(decodedText, decodedResult) {
-    // Handle on success condition with the decoded text or result.
-    console.log(`Scan result: ${decodedText}`, decodedResult);
-    document.getElementById('dec_code').value=decodedText;
-    const userAction = async () => {
-      const response = await fetch('https://api.nal.usda.gov/fdc/v1/food/' + decodedText + '?api_key=aEhCjuYhkfGxsOSgdrovQjMHWLRiBOuvoqs3thGr');
-      const myJson = await response.json(); //extract JSON from the http response
-      document.getElementById('returned').value=myJson;
-      // do something with myJson
-    }
-    // ...
-    html5QrcodeScanner.clear();
-  }
-
-  function onScanError(errorMessage) {
-    // handle on error condition, with error message
-  }
-  html5QrcodeScanner.render(onScanSuccess, onScanError);
-</script>-->
-
 </body>
-
 </html>
