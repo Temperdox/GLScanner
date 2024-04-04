@@ -18,7 +18,6 @@
 <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 <script>
   // Check if the browser supports the BarcodeDetector API
-  const barcodeDetector = new BarcodeDetector();
     const codeReader = new BarcodeDetector.getSupportedFormats();
     var html5QrcodeScanner = new Html5QrcodeScanner(
       "qr-reader", { fps: 10, qrbox: 250 });
