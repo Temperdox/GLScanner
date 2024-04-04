@@ -18,8 +18,7 @@
 <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 <script>
   // Check if the browser supports the BarcodeDetector API
-  if ('BarcodeDetector' in window) {
-    const barcodeDetector = new BarcodeDetector();
+  const barcodeDetector = new BarcodeDetector();
     const codeReader = new BarcodeDetector.getSupportedFormats();
     var html5QrcodeScanner = new Html5QrcodeScanner(
       "qr-reader", { fps: 10, qrbox: 250 });
@@ -85,9 +84,6 @@
           <p>Glycemic Load: ${glycemicLoad}</p>
         `;
     }
-  } else {
-    console.log('Barcode detection is not supported in this browser');
-  }
 </script>
 </body>
 </html>
